@@ -24,24 +24,75 @@ def server(input, output, session):
             asc = True
         else:
             asc = False
-        df = df[['Team','EV_TOI','xGF/60','xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        
+        if input.strength()=="even":
+            if input.y() == "Team":
+                df = df[['Team','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='Team',ascending=asc).round(3)
+            elif input.y() == 'xGF/60':
+                df = df[['Team','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='EV_xGF/60',ascending=asc).round(3)
+            elif input.y() == 'xGA/60':
+                df = df[['Team','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='EV_xGA/60',ascending=asc).round(3)
+            else:
+                df = df[['Team','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        elif input.strength()=="_5v5":
+            if input.y() == "Team":
+                df = df[['Team','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='Team',ascending=asc).round(3)
+            elif input.y() == 'xGF/60':
+                df = df[['Team','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='5v5_xGF/60',ascending=asc).round(3)
+            elif input.y() == 'xGA/60':
+                df = df[['Team','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='5v5_xGA/60',ascending=asc).round(3)
+            else:
+                df = df[['Team','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        else:
+            if input.y() == "Team":
+                df = df[['Team','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='Team',ascending=asc).round(3)
+            elif input.y() == 'xGF/60':
+                df = df[['Team','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='ALL_xGF/60',ascending=asc).round(3)
+            elif input.y() == 'xGA/60':
+                df = df[['Team','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='ALL_xGA/60',ascending=asc).round(3)
+            else:
+                df = df[['Team','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
         return df
     
     @output
     @render_widget
     def my_widget():
         df = pd.read_csv(path)
-        fig = px.scatter(df, 'xGF/60', 'xGA/60',color="EV_TOI",template="plotly_dark",height=1050,width=1050,text='Team')
+        if input.strength()=="even":
+            title_strength = "Even Strength"
+            title_toi = "EV"
+            x_col = "EV_xGF/60"
+            y_col = "EV_xGA/60"
+            x_title = "Even Strength xGF/60"
+            y_title = "Even Strength xGA/60"
+            color_for_chart = "EV_TOI"
+        elif input.strength()=="_5v5":
+            title_strength="5v5"
+            title_toi="5v5"
+            x_col = "5v5_xGF/60"
+            y_col = "5v5_xGA/60"
+            x_title = "5v5 xGF/60"
+            y_title = "5v5 xGA/60"
+            color_for_chart="5v5_TOI"
+        else:
+            title_strength="All Situation"
+            title_toi="All"
+            x_col = "ALL_xGF/60"
+            y_col = "ALL_xGA/60"
+            x_title = "All Situation xGF/60"
+            y_title = "All Situation xGA/60"
+            color_for_chart="ALL_TOI"
+        fig = px.scatter(df, x_col, y_col,color=color_for_chart,template="plotly_dark",height=1050,width=1050,text='Team')
         fig.update_traces(textposition='top right',marker=dict(size=10))
         fig.update(layout_xaxis_range = [1.5,3.7])
         fig.update(layout_yaxis_range = [3.7,1.5])
         fig.update_traces(textfont_size=15)
-        fig.add_vline(x=df['xGF/60'].mean(), line_width=2, line_dash="dash", line_color="#617296")
-        fig.add_hline(y=df['xGA/60'].mean(), line_width=2, line_dash="dash", line_color="#617296")
+        fig.add_vline(x=df[x_col].mean(), line_width=2, line_dash="dash", line_color="#617296")
+        fig.add_hline(y=df[y_col].mean(), line_width=2, line_dash="dash", line_color="#617296")
         fig.update_layout(xaxis_showgrid=False, yaxis_showgrid=False,plot_bgcolor="#222222",paper_bgcolor="#222222")
         fig.update_layout(
-            title=("Team Even-Strength xG Rates<br>"+
-            "<i>2022-23 NHL Playoffs</i><br>"),
+            title=("Team " +title_strength + " xG Rates<br>"+
+            "<i>2023-24 NHL Regular Season</i><br>"),
             margin=dict(r=20, l=40, b=100, t=90),
             template='plotly_dark')
         fig.add_annotation(
@@ -58,6 +109,8 @@ def server(input, output, session):
             , font=dict(size=11, color="white")
             , align="left"
         )
+        fig.update_layout(xaxis_title=x_title)
+        fig.update_layout(yaxis_title=y_title)
         return fig
     @reactive.Effect
     def _():
@@ -148,7 +201,7 @@ team_xg_rates = App(ui.page_fluid(
             ),
         )
         ),ui.row(
-        ui.column(3,ui.tags.br(),ui.tags.h2("Team Even-Strength xG Rates"),ui.input_action_button("btn", "Toggle Table"),ui.div({"id":"main-content"},
+        ui.column(3,ui.tags.br(),ui.tags.h2("Team xG Rates"),ui.tags.h5("Strength", class_="app-heading"),ui.input_select("strength", "",{'even':"Even",'_5v5':"5v5",'All':"All Situations"}),ui.input_action_button("btn", "Toggle Table"),ui.div({"id":"main-content"},
             #ui.output_table("table"),
         )),
         ui.column(9,output_widget("my_widget"),#output_widget("it"),

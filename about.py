@@ -83,7 +83,6 @@ about = App(ui.page_fluid(
             ),
         )),ui.tags.br(),ui.tags.h2("About"),ui.tags.h6("This section of the site is under construction. Eventually, this will have some general explinations on my xG model, the charts I make, and a glossary. I'll hopefully have this finished in the very near future!"),
         ui.tags.h5("Coming Soon"),("This site, as mentioned in it's very early stages. I wanted to use this section to highlight features that will be added soon to the site:"),ui.tags.ul(ui.tags.li("Data from all seasons dating back to 2007"),
-        ui.tags.li("Ability to see stats from more strengths (5v5, All Situation, 5v5, 5v4, 5v3, etc.)"),
         ui.tags.li("More stat options for each chart (Corsi, Fenwick, etc.)"),
         ui.tags.li("Mobile friendly UI"),
         ui.tags.li("Glossary to help explain stats"),

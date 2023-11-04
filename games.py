@@ -8,6 +8,7 @@ from shinywidgets import output_widget, render_widget
 import pandas as pd
 from configure import base_url
 import math
+import datetime
 
 
 # Paths to data
@@ -17,7 +18,11 @@ data = data[['Home','Away','Game_Id','Date','Link']]
 game_dates = ['All']
 game_dates_temp = data['Date'].value_counts().keys().tolist()
 game_dates_temp=game_dates_temp[::-1]
-game_dates.extend(game_dates_temp)
+dates = [datetime.datetime.strptime(ts, "%Y-%m-%d") for ts in game_dates_temp]
+dates.sort()
+sorteddates = [datetime.datetime.strftime(ts, "%Y-%m-%d") for ts in dates]
+sorteddates = sorteddates[::-1]
+game_dates.extend(sorteddates)
 print(game_dates)
 default=game_dates[1]
 def server(input,output,session):
@@ -44,11 +49,12 @@ def server(input,output,session):
         return df.style.set_table_attributes(
                     'class="dataframe shiny-table table w-auto"'
                 ).set_properties(**{'border': '1.3px #222222'},).hide_index().set_table_styles(
-                    [dict(selector="th", props=[("text-align", "right")])]
+                    [dict(selector="th", props=[("text-align", "right"),('font-size','25px')]),
+                     dict(selector="tr", props=[('font-size','21px')]),]
                 )
 
 games = App(ui.page_fluid(
-    ui.tags.base(href=base_url),
+    ui.tags.base(href=base_url), 
     ui.tags.div(
          {"style": "width:75%;margin: 0 auto"},
         ui.tags.style(
@@ -119,7 +125,7 @@ games = App(ui.page_fluid(
                 href="about/"
             ),
         )),ui.row(
-    ui.column(9,ui.tags.br(),ui.tags.h2("Game Charts"),ui.input_select(
+    ui.column(5,ui.tags.br(),ui.tags.h2("Games"),ui.input_select(
         "team",
         "Filter by Team:",
         {
@@ -163,7 +169,6 @@ games = App(ui.page_fluid(
         "Filter by Date:",
         game_dates,
         selected=default
-    ),
-    ui.output_table("table"),
-              
+    ),),ui.column(7,ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),
+    ui.output_table("table"),          
     )),)),server)

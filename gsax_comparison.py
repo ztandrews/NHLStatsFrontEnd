@@ -31,7 +31,7 @@ def server(input,output,session):
         df = df.sort_values(by='GSAx',ascending=False)
         seq = df['Color'].tolist()
         df = df.sort_values(by='GSAx',ascending=False)
-        fig = px.bar(df, x="Goalie", y="GSAx",text=('str'),height=1050,width=750,template="plotly_dark",color='Goalie',color_discrete_sequence=seq,hover_name="Goalie",hover_data={"str":False,"Goalie":False,'Team':True})
+        fig = px.bar(df, x="Goalie", y="GSAx",text=('str'),height=1050,width=750,template="plotly_dark",color='Goalie',color_discrete_sequence=seq,hover_name="Goalie",hover_data={"str":False,"Goalie":False})
         fig.update_layout(plot_bgcolor="#222222",paper_bgcolor="#222222")
         fig.update_traces(marker_line_color='#FFFFFF',
                marker_line_width=1.5)

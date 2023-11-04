@@ -24,25 +24,81 @@ def server(input, output, session):
             asc = True
         else:
             asc = False
-        df = df[(df['Team']==input.x())&(df['EV_TOI']>=input.toi())]
-        df = df[['Player','EV_TOI','xGF/60','xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        if input.strength()=="even":
+            df = df[(df['Team']==input.x())&(df['EV_TOI']>=input.toi())]
+            if input.y() == "xGF/60":
+                df = df[['Player','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='EV_xGF/60',ascending=asc).round(3)
+            elif input.y() == "xGA/60":
+                df = df[['Player','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='EV_xGA/60',ascending=asc).round(3)
+            elif input.y() == 'TOI':
+                df = df[['Player','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by='EV_TOI',ascending=asc).round(3)
+            else:
+                df = df[['Player','EV_TOI','EV_xGF/60','EV_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        elif input.strength()=="_5v5":
+            df = df[(df['Team']==input.x())&(df['5v5_TOI']>=input.toi())]
+            if input.y() == "xGF/60":
+                df = df[['Player','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='5v5_xGF/60',ascending=asc).round(3)
+            elif input.y() == "xGA/60":
+                df = df[['Player','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='5v5_xGA/60',ascending=asc).round(3)
+            elif input.y() == 'TOI':
+                df = df[['Player','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by='5v5_TOI',ascending=asc).round(3)
+            else:
+                df = df[['Player','5v5_TOI','5v5_xGF/60','5v5_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
+        else:
+            df = df[(df['Team']==input.x())&(df['ALL_TOI']>=input.toi())]
+            if input.y() == "xGF/60":
+                df = df[['Player','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='ALL_xGF/60',ascending=asc).round(3)
+            elif input.y() == "xGA/60":
+                df = df[['Player','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='ALL_xGA/60',ascending=asc).round(3)
+            elif input.y() == 'TOI':
+                df = df[['Player','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by='ALL_TOI',ascending=asc).round(3)
+            else:
+                df = df[['Player','ALL_TOI','ALL_xGF/60','ALL_xGA/60']].sort_values(by=input.y(),ascending=asc).round(3)
         return df
+        
+
     
     @output
     @render_widget
     def my_widget():
         df = pd.read_csv(path)
         team = input.x()
-        data = df[(df['Team']==team)&(df['EV_TOI']>=input.toi())]
-        fig = px.scatter(data, 'xGF/60', 'xGA/60',color="EV_TOI",template="plotly_dark",height=1050,width=1050,text='Player')
+        if input.strength()=="even":
+            title_strength = "Even Strength"
+            title_toi = "EV"
+            x_col = "EV_xGF/60"
+            y_col = "EV_xGA/60"
+            x_title = "Even Strength xGF/60"
+            y_title = "Even Strength xGA/60"
+            color_for_chart = "EV_TOI"
+            data = df[(df['Team']==team)&(df['EV_TOI']>=input.toi())]
+        elif input.strength()=="_5v5":
+            title_strength="5v5"
+            title_toi="5v5"
+            x_col = "5v5_xGF/60"
+            y_col = "5v5_xGA/60"
+            x_title = "5v5 xGF/60"
+            y_title = "5v5 xGA/60"
+            color_for_chart="5v5_TOI"
+            data = df[(df['Team']==team)&(df['5v5_TOI']>=input.toi())]
+        else:
+            title_strength="All Situation"
+            title_toi="All"
+            x_col = "ALL_xGF/60"
+            y_col = "ALL_xGA/60"
+            x_title = "All Situation xGF/60"
+            y_title = "All Situation xGA/60"
+            color_for_chart="ALL_TOI"
+            data = df[(df['Team']==team)&(df['ALL_TOI']>=input.toi())]
+        fig = px.scatter(data, x_col, y_col,color=color_for_chart,template="plotly_dark",height=1050,width=1050,text='Player')
         fig.update_traces(textposition='top right',marker=dict(size=10))
         fig.update(layout_xaxis_range = [.01,6])
         fig.update(layout_yaxis_range = [6,.01])
         fig.update_layout(xaxis_showgrid=False, yaxis_showgrid=False,plot_bgcolor="#222222",paper_bgcolor="#222222")
         fig.update_layout(
-            title=(team + " Skaters Even-Strength On-Ice xG Rates<br>"+
-            "<i>2022-23 NHL Playoffs</i><br>" +
-            "<i>Minimum "+ str(input.toi()) +" EV TOI</i>"),
+            title=(team + " Skaters "+title_strength+" On-Ice xG Rates<br>"+
+            "<i>2023-24 NHL Regular Season</i><br>" +
+            "<i>Minimum "+ str(input.toi())  + " " + title_toi + " TOI</i>"),
             margin=dict(r=20, l=40, b=100, t=90),
             template='plotly_dark')
         fig.add_annotation(
@@ -59,13 +115,31 @@ def server(input, output, session):
             , font=dict(size=11, color="white")
             , align="left"
         )
+        fig.update_layout(xaxis_title=x_title)
+        fig.update_layout(yaxis_title=y_title)
         return fig
     
     @reactive.Effect
     def _():
         val = input.quant()
+
+        if input.strength()=="even":
+            calc = "EV_TOI"
+        elif input.strength()=="_5v5":
+            calc = "5v5_TOI"
+        else:
+            calc = "ALL_TOI"
+
+        if val == "_25":
+           q= round(df[calc].quantile(.25),1)
+        elif val == "_50":
+            q= round(df[calc].quantile(.5),1)
+        elif val == "_75":
+            q=round(df[calc].quantile(.75),1)
+        else:
+            q=0
         ui.update_slider(
-            "toi", value=val
+            "toi", value=q
         )
 
     @reactive.Effect
@@ -74,7 +148,7 @@ def server(input, output, session):
         if btn % 2 == 1:
             tab = ui.output_table("table")
             ui.insert_ui(
-                ui.div({"id": "inserted-slider"},ui.tags.h5("Sort Table by", class_="app-heading"),ui.input_select("y","",{"Player":"Player","EV_TOI":"EV_TOI","xGF/60":"xGF/60","xGA/60":"xGA/60"}),
+                ui.div({"id": "inserted-slider"},ui.tags.h5("Sort Table by", class_="app-heading"),ui.input_select("y","",{"Player":"Player","TOI":"TOI","xGF/60":"xGF/60","xGA/60":"xGA/60"}),
             ui.input_radio_buttons(
         "z", "", {"F": "High to Low", "T": "Low to High"}
     ),ui.output_table("table")),
@@ -157,7 +231,7 @@ on_ice_xg = App(ui.page_fluid(
             ),
         )
         ),ui.row(
-        ui.column(3,ui.tags.br(),ui.tags.h2("Even-Strength On-Ice xG Rates"),ui.tags.h5("Select a Team", class_="app-heading"),
+        ui.column(3,ui.tags.br(),ui.tags.h2("On-Ice xG Rates"),ui.tags.h5("Team", class_="app-heading"),
             ui.input_select("x", "", { "ANA": "Anaheim Ducks",
             "ARI": "Arizona Coyotes",
             "BOS": "Boston Bruins",
@@ -189,17 +263,17 @@ on_ice_xg = App(ui.page_fluid(
             "VAN": "Vancouver Canucks",
             "VGK": "Vegas Golden Knights",
             "WSH": "Washington Capitals",
-            "WPG": "Winnipeg Jets"}),
-                                      ui.tags.h5("Minimum EV TOI", class_="app-heading"),
-            ui.input_slider("toi", "", min=0, max=round(df['EV_TOI'].max(),0), value=round(df['EV_TOI'].quantile(.25),1)),
-            ui.tags.h5("EV TOI Percentile (Among All NHL Skaters)"),
+            "WPG": "Winnipeg Jets"}),ui.tags.h5("Strength", class_="app-heading"),ui.input_select("strength", "",{'even':"Even",'_5v5':"5v5",'All':"All Situations"}), 
+                                      ui.tags.h5("Minimum TOI", class_="app-heading"),
+            ui.input_slider("toi", "", min=0, max=round(df['ALL_TOI'].max(),0), value=round(df['EV_TOI'].quantile(.25),1)),
+            ui.tags.h5("TOI Percentile (Among All NHL Skaters)",class_="app-heading"),
         ui.input_radio_buttons(
         "quant",
         "",
         {
-            round(df['EV_TOI'].quantile(.25),1): "Top 75%",
-            round(df['EV_TOI'].quantile(.5),1): "Top 50%",
-            round(df['EV_TOI'].quantile(.75),1): "Top 25%",
+            "_25": "Top 75%",
+            "_50": "Top 50%",
+            "_75": "Top 25%",
         },
     ), ui.input_action_button("btn", "Toggle Table"),ui.div({"id":"main-content"}),
         #ui.output_table("table")

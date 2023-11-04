@@ -38,7 +38,7 @@ def server(input,output,session):
         fig.update_traces(line=dict(width=5))
         fig.update_layout(
             title=("GSAx by "+input.y()+"<br>"+
-            "<i>2022-23 NHL Playoffs</i>"),
+            "<i>2023-24 NHL Regular Season</i>"),
             margin=dict(r=20, l=40, b=100, t=90),
             template='plotly_dark')
         fig.add_annotation(

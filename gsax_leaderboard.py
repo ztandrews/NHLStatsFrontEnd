@@ -37,7 +37,7 @@ def server(input,output,session):
         fig.update_layout(
             title=("GSAx Leaderboard<br>"+
                    preface+" " + str(input.size())+" Goalies <br>"+
-            "<i>2022-23 NHL Playoffs</i>"),
+            "<i>2023-24 NHL Regular Season</i>"),
             margin=dict(r=20, l=40, b=100, t=90),)
         fig.add_annotation(
             text = ("Data: @StatsByZach on Twitter")
