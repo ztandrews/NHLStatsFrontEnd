@@ -30,7 +30,7 @@ def server(input,output,session):
         df['str'] = df['GSAx'].round(4)
         df['str'] = df['str'].map('{:,.3f}'.format)
         color_discrete_sequence = ['#617296']*len(df)
-        fig = px.bar(df, x="GSAx", y="Goalie",text=('str'),height=1050,width=1050,template="plotly_dark",color_discrete_sequence=color_discrete_sequence,hover_name="Goalie",hover_data={"str":False,"Goalie":False})
+        fig = px.bar(df, x="GSAx", y="Goalie",text=('str'),height=1300,width=1050,template="plotly_dark",color_discrete_sequence=color_discrete_sequence,hover_name="Goalie",hover_data={"str":False,"Goalie":False})
         fig.update_layout(plot_bgcolor="#222222",paper_bgcolor="#222222")
         fig.update_traces(marker_line_color='#FFFFFF',
                marker_line_width=1.5)
@@ -66,7 +66,7 @@ def server(input,output,session):
 gsax_leaderboard = App(ui.page_fluid(
     ui.tags.base(href=base_url),
     ui.tags.div(
-         {"style": "width:75%;margin: 0 auto"},
+         {"style": "width:75%;margin: 0 auto;max-width: 1500px;"},
         ui.tags.style(
             """
             h4 {
@@ -137,7 +137,7 @@ gsax_leaderboard = App(ui.page_fluid(
         )),ui.row(
     ui.column(3,ui.tags.br(),ui.tags.h2("GSAx Leaderboard"),
     ui.tags.h5("Leaderboard Size", class_="app-heading"),
-    ui.input_slider("size", "", min=1, max=len(choices), value=len(choices)),
+    ui.input_slider("size", "", min=1, max=len(choices), value=32),
     ui.tags.h5("Reverse Leaderboard", class_="app-heading"),
     ui.input_switch("rev", "", False),
     ),

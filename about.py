@@ -14,7 +14,7 @@ from configure import base_url
 about = App(ui.page_fluid(
     ui.tags.base(href=base_url),
     ui.tags.div(
-         {"style": "width:75%;margin: 0 auto"},
+         {"style": "width:75%;margin: 0 auto;max-width: 1500px;"},
         ui.tags.style(
             """
             h4 {

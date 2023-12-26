@@ -56,7 +56,7 @@ def server(input,output,session):
 games = App(ui.page_fluid(
     ui.tags.base(href=base_url), 
     ui.tags.div(
-         {"style": "width:75%;margin: 0 auto"},
+         {"style": "width:75%;margin: 0 auto;max-width: 1500px;"},
         ui.tags.style(
             """
             h4 {
@@ -169,6 +169,5 @@ games = App(ui.page_fluid(
         "Filter by Date:",
         game_dates,
         selected=default
-    ),),ui.column(7,ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),ui.tags.br(),
-    ui.output_table("table"),          
+    ),ui.output_table("table"),
     )),)),server)

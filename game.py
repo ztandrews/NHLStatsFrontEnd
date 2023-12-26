@@ -432,7 +432,7 @@ def server(input,output,session):
 
         fig.update_layout(xaxis=dict(showgrid=False,zeroline=False,visible= False),
                     yaxis=dict(showgrid=False,zeroline=False,visible= False),
-                        width=1400,height=630
+                        width=1300,height=630
         )
         fig.update_layout(plot_bgcolor='#222222',
                                         paper_bgcolor='#222222',)
@@ -452,22 +452,22 @@ def server(input,output,session):
                 c="#fad85f"
             else:
                 c="#8dfa5f"
-            if xg < .03:
-                mul = 25
+            if xg < .01:
+                mul = 5.5
             elif xg >=.03 and xg < .07:
-                mul = 23
+                mul = 5.5
             elif xg >= .07 and xg < .11:
-                mul = 20
+                mul = 5.5
             elif xg >= .11 and xg < .15:
-                mul = 17
+                mul = 5.5
             else:
-                mul = 7
+                mul = 5.5
             fig.add_shape(
                 type='circle',
-                x0=xc - xg*mul,
-                y0=yc - xg*mul,
-                x1=xc + xg*mul,
-                y1=yc + xg*mul,
+                x0=xc - xg ** 0.5 * mul,
+                y0=yc - xg ** 0.5 * mul,
+                x1=xc + xg ** 0.5 * mul,
+                y1=yc + xg ** 0.5 * mul,
                 fillcolor=c,
                 opacity=1,
                 line=dict(color="#FFFFFF",width=1)
@@ -485,22 +485,22 @@ def server(input,output,session):
                 c="#fad85f"
             else:
                 c="#8dfa5f"
-            if xg < .03:
-                mul = 25
+            if xg < .01:
+                mul = 5.5
             elif xg >=.03 and xg < .07:
-                mul = 23
+                mul = 5.5
             elif xg >= .07 and xg < .11:
-                mul = 20
+                mul = 5.5
             elif xg >= .11 and xg < .15:
-                mul = 17
+                mul = 5.5
             else:
-                mul = 7
+                mul = 5.5
             fig.add_shape(
                 type='circle',
-                x0=xc - xg*mul,
-                y0=yc - xg*mul,
-                x1=xc + xg*mul,
-                y1=yc + xg*mul,
+                x0=xc - xg ** 0.5 * mul,
+                y0=yc - xg ** 0.5 * mul,
+                x1=xc + xg ** 0.5 * mul,
+                y1=yc + xg ** 0.5 * mul,
                 fillcolor=c,
                 opacity=1,
                 line=dict(color="#FFFFFF",width=1)
@@ -630,12 +630,12 @@ def server(input,output,session):
         # Update layout for axis labels, theme, and figure dimensions
         fig.update_layout(
             title="Cumulative xG<br>"+away+  " @ " + home +" - " + date + "<br>Strength: All situations",
-            xaxis_title="Time",
+            xaxis_title="Game Time Elapsed",
             xaxis_showgrid=False,  # Hide x-axis grid lines
-            yaxis_title="xG",
+            yaxis_title="All-Situation xG",
             yaxis_showgrid=False,  # Hide y-axis grid lines
             template="plotly_dark",
-            width=1400,
+            width=1300,
             height=700,
             plot_bgcolor="#222222",  # Set plot background color
             paper_bgcolor="#222222",
@@ -661,13 +661,13 @@ def server(input,output,session):
                     tickvals=[0,1200,2400,3600,4800],  # positions of tick marks
                     ticktext=["0","20","40","60","80"]  # text to display at those positions
                 )
-            )
+            ) 
         fig.update_layout(hovermode=False)
         return fig
 game = App(ui.page_fluid(
     ui.tags.base(href=base_url),
     ui.tags.div(
-         {"style": "width:75%;margin: 0 auto"},
+         {"style": "width:75%;margin: 0 auto;max-width: 1500px;"},
         ui.tags.style(
             """
             h4 {
@@ -737,5 +737,5 @@ game = App(ui.page_fluid(
             ),
         )),ui.row(
     ui.column(12,ui.tags.br(),ui.tags.h2(ui.output_text("game_info_teams")),ui.tags.h2(ui.output_text("game_info_date")),ui.tags.h5("Shot Map"),ui.tags.h5("Select strength"),ui.input_select("strength", "", ["All",'Even','5v5']),ui.tags.h5("Select period"),ui.input_select("period", "",["All",1,2,3] ),
-              )),ui.row(ui.column(1),ui.column(11,output_widget("my_widget3"),output_widget("xg_chart"),ui.tags.br()),
+              )),ui.row(ui.column(11,output_widget("my_widget3"),ui.tags.h5("xG Accumulation"),output_widget("xg_chart"),ui.tags.br()),
     ),ui.row(ui.tags.h5("On-Ice xGF%'s"),ui.tags.h5("Strength", class_="app-heading"),ui.input_select("strength_for_bars", "",{'even':"Even",'_5v5':"5v5",'All':"All Situations"})),ui.row(ui.column(6,output_widget("my_widget2")),ui.column(6,output_widget("my_widget"))))),server)

@@ -161,7 +161,7 @@ def server(input, output, session):
 on_ice_xg = App(ui.page_fluid(
     ui.tags.base(href=base_url),
     ui.tags.div(
-         {"style": "width:75%;margin: 0 auto"},
+         {"style": "width:75%;margin: 0 auto;max-width: 1500px;"},
         ui.tags.style(
             """
             h4 {
@@ -263,7 +263,7 @@ on_ice_xg = App(ui.page_fluid(
             "VAN": "Vancouver Canucks",
             "VGK": "Vegas Golden Knights",
             "WSH": "Washington Capitals",
-            "WPG": "Winnipeg Jets"}),ui.tags.h5("Strength", class_="app-heading"),ui.input_select("strength", "",{'even':"Even",'_5v5':"5v5",'All':"All Situations"}), 
+            "WPG": "Winnipeg Jets"}),ui.tags.h5("Strength", class_="app-heading"),ui.input_select("strength", "",{'even':"Even",'_5v5':"5v5",'All':"All Strengths"}), 
                                       ui.tags.h5("Minimum TOI", class_="app-heading"),
             ui.input_slider("toi", "", min=0, max=round(df['ALL_TOI'].max(),0), value=round(df['EV_TOI'].quantile(.25),1)),
             ui.tags.h5("TOI Percentile (Among All NHL Skaters)",class_="app-heading"),
